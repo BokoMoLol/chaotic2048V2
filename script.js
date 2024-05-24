@@ -86,4 +86,94 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Move and merge tiles in the specified direction
     function move(direction) {
-        let moved =
+        let moved = false;
+
+        const moveRow = (row) => {
+            const newRow = row.filter(val => val !== 0 && val !== -1);
+            for (let j = 0; j < newRow.length - 1; j++) {
+                if (newRow[j] === newRow[j + 1]) {
+                    newRow[j] = modifyMergeResult(newRow[j]);
+                    newRow.splice(j + 1, 1);
+                    newRow.push(0);
+                }
+            }
+            while (newRow.length < boardSize) {
+                newRow.push(0);
+            }
+            return newRow;
+        };
+
+        for (let i = 0; i < boardSize; i++) {
+            let row;
+            if (direction === 'right' || direction === 'left') {
+                row = board[i];
+            } else {
+                row = board.map(r => r[i]);
+            }
+
+            if (direction === 'right' || direction === 'down') {
+                row = row.reverse();
+            }
+
+            const newRow = moveRow(row);
+
+            if (direction === 'right' || direction === 'down') {
+                newRow.reverse();
+            }
+
+            for (let j = 0; j < boardSize; j++) {
+                if (direction === 'right' || direction === 'left') {
+                    if (board[i][j] !== newRow[j]) {
+                        moved = true;
+                    }
+                    board[i][j] = newRow[j];
+                } else {
+                    if (board[j][i] !== newRow[j]) {
+                        moved = true;
+                    }
+                    board[j][i] = newRow[j];
+                }
+            }
+        }
+
+        if (moved) {
+            addRandomTile();
+            updateBoard();
+        }
+    }
+
+    // Handle key events for moving tiles
+    document.addEventListener('keydown', (event) => {
+        switch (event.key) {
+            case 'ArrowUp':
+                move('up');
+                break;
+            case 'ArrowDown':
+                move('down');
+                break;
+            case 'ArrowLeft':
+                move('left');
+                break;
+            case 'ArrowRight':
+                move('right');
+                break;
+        }
+    });
+
+    // Handle on-screen arrow buttons by dispatching keyboard events
+    document.getElementById('up').addEventListener('click', () => {
+        document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowUp'}));
+    });
+    document.getElementById('down').addEventListener('click', () => {
+        document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowDown'}));
+    });
+    document.getElementById('left').addEventListener('click', () => {
+        document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowLeft'}));
+    });
+    document.getElementById('right').addEventListener('click', () => {
+        document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'ArrowRight'}));
+    });
+
+    // Initialize the game
+    initializeBoard();
+});
