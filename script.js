@@ -160,6 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handle on-screen arrow buttons
+    document.getElementById('up').addEventListener('click', () => move('up'));
+    document.getElementById('down').addEventListener('click', () => move('down'));
+    document.getElementById('left').addEventListener('click', () => move('left'));
+    document.getElementById('right').addEventListener('click', () => move('right'));
+
     // Initialize the game
     initializeBoard();
 });
